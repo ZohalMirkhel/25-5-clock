@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setBreakLength, setSessionLength, startTimer, resetTimer } from '../redux/actions';
+import { setBreakLength, setSessionLength, startTimer, resetTimer, decrementTimeLeft, switchTimer } from '../redux/actions';
 
 const Clock = () => {
   const dispatch = useDispatch();
@@ -10,12 +10,28 @@ const Clock = () => {
   const timeLeft = useSelector(state => state.timeLeft);
   const currentTimer = useSelector(state => state.currentTimer);
 
+  useEffect(() => {
+    let interval = null;
+    if (timerRunning) {
+      interval = setInterval(() => {
+        if (timeLeft > 0) {
+          dispatch(decrementTimeLeft());
+        } else {
+          dispatch(switchTimer());
+        }
+      }, 1000);
+    } else if (!timerRunning && timeLeft !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timerRunning, timeLeft, dispatch]);
+
   const handleBreakChange = (amount) => {
-    dispatch(setBreakLength(Math.max(1, breakLength + amount)));
+    dispatch(setBreakLength(Math.min(60, Math.max(1, breakLength + amount))));
   };
 
   const handleSessionChange = (amount) => {
-    dispatch(setSessionLength(Math.max(1, sessionLength + amount)));
+    dispatch(setSessionLength(Math.min(60, Math.max(1, sessionLength + amount))));
   };
 
   const handleStartStop = () => {
