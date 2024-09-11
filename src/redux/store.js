@@ -1,8 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import clockReducer from './reducers';
+import { createStore } from 'redux';
+import rootReducer from './reducers';
 
-const store = configureStore({
-  reducer: clockReducer,
-});
+const store = createStore(rootReducer);
 
 export default store;
