@@ -13,14 +13,19 @@ const Clock = () => {
 
   useEffect(() => {
     let interval = null;
-    
+  
     if (timerRunning) {
       interval = setInterval(() => {
         if (timeLeft > 0) {
           dispatch(decrementTimeLeft());
         } else if (timeLeft === 0) {
           const beepAudio = document.getElementById('beep');
-          beepAudio.play();
+          if (beepAudio) {
+            beepAudio.currentTime = 0;
+            beepAudio.play().catch(error => {
+              console.error('Error playing audio:', error);
+            });
+          }
           dispatch(switchTimer());
         }
       }, 1000);
@@ -29,7 +34,7 @@ const Clock = () => {
     }
   
     return () => clearInterval(interval);
-  }, [timerRunning, timeLeft, dispatch]);
+  }, [timerRunning, timeLeft, dispatch]);  
 
   const handleBreakChange = (amount) => {
     if (!timerRunning) {
@@ -51,8 +56,10 @@ const Clock = () => {
 
   const handleReset = () => {
     const audio = document.getElementById('beep');
-    audio.pause();
-    audio.currentTime = 0;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
     dispatch(resetTimer());
   };
 
