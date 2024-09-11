@@ -16,22 +16,25 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, sessionLength: action.payload };
     case START_TIMER:
       return { ...state, timerRunning: !state.timerRunning };
-      case RESET_TIMER:
-        return {
-          ...state,
-          breakLength: 5,
-          sessionLength: 25,
-          timeLeft: 25 * 60,
-          timerRunning: false,
-          currentTimer: 'Session',
-        };      
-        case DECREMENT_TIME_LEFT:
-          return { ...state, timeLeft: state.timeLeft - 1 };
-        
-        case SWITCH_TIMER:
-          const newTimer = state.currentTimer === 'Session' ? 'Break' : 'Session';
-          const newTimeLeft = newTimer === 'Session' ? state.sessionLength * 60 : state.breakLength * 60;
-          return { ...state, currentTimer: newTimer, timeLeft: newTimeLeft };        
+    case RESET_TIMER:
+      return {
+        ...state,
+        breakLength: 5,
+        sessionLength: 25,
+        timeLeft: 25 * 60,
+        timerRunning: false,
+        currentTimer: 'Session',
+      };      
+    case DECREMENT_TIME_LEFT:
+      return { ...state, timeLeft: state.timeLeft - 1 };
+    case SWITCH_TIMER:
+      const newTimer = state.currentTimer === 'Session' ? 'Break' : 'Session';
+      const newTimeLeft = newTimer === 'Session' ? state.sessionLength * 60 : state.breakLength * 60;
+      return {
+        ...state,
+        currentTimer: newTimer,
+        timeLeft: newTimeLeft,
+      }          
     case UPDATE_TIME_LEFT:
       return { ...state, timeLeft: action.payload };
     default:

@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setBreakLength, setSessionLength, startTimer, resetTimer, decrementTimeLeft, switchTimer, updateTimeLeft } from '../redux/actions';
 import beepSound from './beep_6.mp3';
 
-
 const Clock = () => {
   const dispatch = useDispatch();
   const breakLength = useSelector(state => state.breakLength);
@@ -14,27 +13,30 @@ const Clock = () => {
 
   useEffect(() => {
     let interval = null;
+    
     if (timerRunning) {
       interval = setInterval(() => {
         if (timeLeft > 0) {
           dispatch(decrementTimeLeft());
         } else if (timeLeft === 0) {
-          document.getElementById('beep').play();
+          const beepAudio = document.getElementById('beep');
+          beepAudio.play();
           dispatch(switchTimer());
         }
       }, 1000);
     } else {
       clearInterval(interval);
     }
+  
     return () => clearInterval(interval);
   }, [timerRunning, timeLeft, dispatch]);
-  
 
   const handleBreakChange = (amount) => {
     if (!timerRunning) {
       dispatch(setBreakLength(Math.min(60, Math.max(1, breakLength + amount))));
     }
   };
+
   const handleSessionChange = (amount) => {
     if (!timerRunning) {
       const newSessionLength = Math.min(60, Math.max(1, sessionLength + amount));
@@ -46,15 +48,13 @@ const Clock = () => {
   const handleStartStop = () => {
     dispatch(startTimer());
   };
-  
+
   const handleReset = () => {
     const audio = document.getElementById('beep');
     audio.pause();
     audio.currentTime = 0;
     dispatch(resetTimer());
   };
-  
-  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -79,7 +79,8 @@ const Clock = () => {
       <div id="timer-label" className="text-4xl mb-6">
         {currentTimer}: 
         <span id="time-left">
-         {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+          {`${Math.floor(timeLeft / 60)}`.padStart(2, '0')}:
+          {`${timeLeft % 60}`.padStart(2, '0')}
         </span>
       </div>
 
@@ -90,12 +91,7 @@ const Clock = () => {
         <button id="reset" onClick={handleReset} className="bg-red-500 text-white px-4 py-2 rounded">Reset</button>
       </div>
 
-      <audio id="beep">
-  <source src={beepSound} type="audio/mpeg" />
-  <source src="beep.ogg" type="audio/ogg" />
-  Your browser does not support the audio element.
-</audio>
-
+      <audio id="beep" src={beepSound}></audio>
     </div>
   );
 };
