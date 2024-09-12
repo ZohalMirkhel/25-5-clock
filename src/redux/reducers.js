@@ -1,4 +1,12 @@
-import { SET_BREAK_LENGTH, SET_SESSION_LENGTH, START_TIMER, RESET_TIMER, DECREMENT_TIME_LEFT, SWITCH_TIMER, UPDATE_TIME_LEFT } from './actions';
+import {
+  SET_BREAK_LENGTH,
+  SET_SESSION_LENGTH,
+  START_TIMER,
+  RESET_TIMER,
+  DECREMENT_TIME_LEFT,
+  SWITCH_TIMER,
+  UPDATE_TIME_LEFT
+} from './actions';
 
 const initialState = {
   breakLength: 5,
@@ -24,7 +32,7 @@ const rootReducer = (state = initialState, action) => {
         timeLeft: 25 * 60,
         timerRunning: false,
         currentTimer: 'Session',
-      };      
+      };
     case DECREMENT_TIME_LEFT:
       return { ...state, timeLeft: state.timeLeft - 1 };
     case SWITCH_TIMER:
@@ -34,7 +42,7 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         currentTimer: newTimer,
         timeLeft: newTimeLeft,
-      }          
+      };
     case UPDATE_TIME_LEFT:
       return { ...state, timeLeft: action.payload };
     default:

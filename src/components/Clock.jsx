@@ -21,11 +21,14 @@ const Clock = () => {
         } else if (timeLeft === 0) {
           const beepAudio = document.getElementById('beep');
           if (beepAudio) {
+            beepAudio.pause();
             beepAudio.currentTime = 0;
             beepAudio.play().catch(error => {
               console.error('Error playing audio:', error);
             });
-          }
+          } else {
+            console.error('Audio element not found.');
+          }          
           dispatch(switchTimer());
         }
       }, 1000);
@@ -35,7 +38,7 @@ const Clock = () => {
   
     return () => clearInterval(interval);
   }, [timerRunning, timeLeft, dispatch]);  
-
+  
   const handleBreakChange = (amount) => {
     if (!timerRunning) {
       dispatch(setBreakLength(Math.min(60, Math.max(1, breakLength + amount))));
@@ -55,10 +58,10 @@ const Clock = () => {
   };
 
   const handleReset = () => {
-    const audio = document.getElementById('beep');
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
+    const beepAudio = document.getElementById('beep');
+    if (beepAudio) {
+      beepAudio.pause();
+      beepAudio.currentTime = 0;
     }
     dispatch(resetTimer());
   };
@@ -98,7 +101,7 @@ const Clock = () => {
         <button id="reset" onClick={handleReset} className="bg-red-500 text-white px-4 py-2 rounded">Reset</button>
       </div>
 
-      <audio id="beep" src={beepSound}></audio>
+      <audio id="beep" src={beepSound} preload="auto" />
     </div>
   );
 };
